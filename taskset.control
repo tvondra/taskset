@@ -1,0 +1,5 @@
+# taskset interface
+comment = 'extension to set CPU affinity'
+default_version = '1.0.0'
+module_pathname = '$libdir/taskset'
+relocatable = true
