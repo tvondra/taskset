@@ -206,6 +206,10 @@ get_taskset(PG_FUNCTION_ARGS)
 	Datum	   *cpus;
 	int			i;
 
+	int16		elmlen;
+	bool		elmbyval;
+	char		elmalign;
+
 	CPU_ZERO(&set);
 
 	if (sched_getaffinity(pid, sizeof(set), &set) == -1)
@@ -228,7 +232,11 @@ get_taskset(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_ARRAYTYPE_P(construct_array_builtin(cpus, idx, INT4OID));
+	get_typlenbyvalalign(INT4OID,
+						 &elmlen, &elmbyval, &elmalign);
+
+	PG_RETURN_ARRAYTYPE_P(construct_array(cpus, idx, INT4OID,
+										  elmlen, elmbyval, elmalign));
 }
 
 /*
@@ -245,6 +253,10 @@ get_taskset_for_pid(PG_FUNCTION_ARGS)
 	Datum	   *cpus;
 	int			i;
 
+	int16		elmlen;
+	bool		elmbyval;
+	char		elmalign;
+
 	CPU_ZERO(&set);
 
 	if (sched_getaffinity(pid, sizeof(set), &set) == -1)
@@ -267,6 +279,9 @@ get_taskset_for_pid(PG_FUNCTION_ARGS)
 			break;
 	}
 
+	get_typlenbyvalalign(INT4OID,
+						 &elmlen, &elmbyval, &elmalign);
 
-	PG_RETURN_ARRAYTYPE_P(construct_array_builtin(cpus, idx, INT4OID));
+	PG_RETURN_ARRAYTYPE_P(construct_array(cpus, idx, INT4OID,
+										  elmlen, elmbyval, elmalign));
 }
